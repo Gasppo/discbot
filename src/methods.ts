@@ -1,4 +1,5 @@
 import { Collection, GuildMember, Invite } from "discord.js";
+import { prisma } from "./prisma";
 
 /**
  * Find which invite was used by a newly joined member.
@@ -25,6 +26,43 @@ export const findUsedInvite = (invitesBefore: Map<string, number>, invitesAfter:
 };
 
 
-export const processInvite = (invite: Invite | undefined, member: GuildMember) => {
-    console.log(`${member.user.tag} joined using the invite code ${invite?.code} from ${invite?.inviter?.username}. Invite was used ${invite?.uses} times since its creation.`);
+export const processInvite = async (invite: Invite | undefined, member: GuildMember) => {
+
+    const invitee = member.user.tag;
+    const inviter = invite?.inviter?.tag;
+    const code = invite?.code;
+    const uses = invite?.uses;
+
+    try {
+        if (invitee && inviter && code && uses) {
+            console.log(`${member.user.username} joined using the invite code ${invite?.code} from ${invite?.inviter?.username}. Invite was used ${invite?.uses} times since its creation.`);
+            await prisma.discordInvite.create({ data: { code, invitee, inviter } })
+        }
+
+        else {
+            console.log(`${member.user.username} joined using an unknown invite.`);
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
+export const getDistinctReferrals = async (username: string) => {
+
+    try {
+        const result = await prisma.discordInvite.findMany({
+            where: {
+                inviter: username
+            },
+            distinct: ['invitee']
+        });
+
+        return result.length;
+    }
+    catch (e) {
+        console.log(e);
+        return 0;
+    }
+
 }

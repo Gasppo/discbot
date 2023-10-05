@@ -1,19 +1,15 @@
 import dotenv from 'dotenv';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { client } from './discordClient';
 import { findUsedInvite, processInvite } from './methods';
+import { botHandler } from './bot/cases';
 
 dotenv.config();
-
-
-const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildInvites]
-});
 
 const token = process.env.DISCORD_BOT_TOKEN || "";
 const inviteCache: Map<string, Map<string, number>> = new Map();  // To store invite counts for guilds
 
 client.once('ready', async () => {
-    console.log('Bot is ready!');
+    console.log(`Bot is ready! Tag is ${client?.user?.tag}`);
 
     // Cache invites for all guilds the bot is in
     client.guilds.cache.forEach(async (guild) => {
@@ -35,11 +31,14 @@ client.on('guildMemberAdd', async (member) => {
 
     if (usedInviteCode) {
         const invite = invitesAfter.get(usedInviteCode);
-        processInvite(invite, member);
+        await processInvite(invite, member);
     }
 
     // Update the cache
     inviteCache.set(guild.id, invitesBefore);
 });
+
+
+client.on('messageCreate',botHandler);
 
 client.login(token);
