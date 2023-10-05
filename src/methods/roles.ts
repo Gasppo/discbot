@@ -1,5 +1,6 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, Invite, PartialGuildMember } from "discord.js";
 import { getDistinctReferrals } from "./referrals";
+import { prisma } from "../prisma";
 
 const RANKS = ["Mode Invite Pioneer", "Mode Invite Ambassador", "Mode Invite King"];
 
@@ -25,9 +26,16 @@ export const refreshRole = async (member: GuildMember) => {
 
 export const handleRoleRank = (member: GuildMember, referrals: number) => {
 
-    if (referrals < 0) return;
-    if (referrals < 5) return assignRole(member, RANKS[0]);
-    if (referrals < 10) return assignRole(member, RANKS[1]);
-    if (referrals >= 10) return assignRole(member, RANKS[2]);
+    const inviter = member.guild.members.cache.find(member => member.user.tag === member.user.tag);
 
+    if (!inviter) return;
+    if (referrals < 0) return;
+    if (referrals < 5) return assignRole(inviter, RANKS[0]);
+    if (referrals < 10) return assignRole(inviter, RANKS[1]);
+    if (referrals >= 10) return assignRole(inviter, RANKS[2]);
+
+}
+
+export const handleVerifiedRole = async (member: GuildMember | PartialGuildMember) => {
+    await prisma.discordInvite.updateMany({ where: { invitee: member.user.tag }, data: { validated: true } });
 }

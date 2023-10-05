@@ -15,5 +15,6 @@ model DiscordInvite {
   code      String   @unique
   invitee   String
   inviter   String
+  validated  Boolean  @default(false)
   createdAt DateTime @default(now())
 }

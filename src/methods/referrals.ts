@@ -6,7 +6,8 @@ export const getDistinctReferrals = async (username: string) => {
     try {
         const result = await prisma.discordInvite.findMany({
             where: {
-                inviter: username
+                inviter: username,
+                validated: true
             },
             distinct: ['invitee']
         });
