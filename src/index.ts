@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
+import { botInviteHandler } from './bot/inviteHandler';
+import { botMessageHandler } from './bot/messageHandler';
 import { client } from './discordClient';
-import { findUsedInvite, processInvite } from './methods';
-import { botHandler } from './bot/cases';
 
 dotenv.config();
 
@@ -22,23 +22,6 @@ client.once('ready', async () => {
 });
 
 
-client.on('guildMemberAdd', async (member) => {
-    const guild = member.guild;
-    const invitesAfter = await guild.invites.fetch();
-    const invitesBefore: Map<string, number> = inviteCache.get(guild.id) || new Map();
-
-    const usedInviteCode = findUsedInvite(invitesBefore, invitesAfter);
-
-    if (usedInviteCode) {
-        const invite = invitesAfter.get(usedInviteCode);
-        await processInvite(invite, member);
-    }
-
-    // Update the cache
-    inviteCache.set(guild.id, invitesBefore);
-});
-
-
-client.on('messageCreate',botHandler);
-
+client.on('guildMemberAdd', async (member) => { botInviteHandler(member, inviteCache) });
+client.on('messageCreate', botMessageHandler);
 client.login(token);
