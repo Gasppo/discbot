@@ -1,7 +1,5 @@
-import { Invite, GuildMember, Collection } from "discord.js";
+import { Collection, GuildMember, Invite } from "discord.js";
 import { prisma } from "../prisma";
-import { handleRoleRank } from "./roles";
-import { getDistinctReferrals } from "./referrals";
 
 export const processInvite = async (invite: Invite | undefined, member: GuildMember) => {
 

@@ -12,14 +12,15 @@ const inviteCache: Map<string, Map<string, number>> = new Map();  // To store in
 client.once('ready', async () => {
     console.log(`Bot is ready! Tag is ${client?.user?.tag}`);
 
-    // Cache invites for all guilds the bot is in
-    client.guilds.cache.forEach(async (guild) => {
+    for (const guild of client.guilds.cache.values()) {
         const guildInvites = await guild.invites.fetch();
         const inviteMap = new Map();
 
         guildInvites.forEach(invite => inviteMap.set(invite.code, invite.uses));
         inviteCache.set(guild.id, inviteMap);
-    });
+
+    }
+
 });
 
 
