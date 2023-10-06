@@ -1,5 +1,6 @@
 import { GuildMember, PartialGuildMember, Role } from "discord.js";
 import { handleVerifiedRole } from "../methods/roles";
+import { prisma } from "../prisma";
 
 
 export const memberRoleUpdateHandler = async (oldMember: GuildMember | PartialGuildMember, newMember: GuildMember | PartialGuildMember) => {
@@ -13,4 +14,8 @@ export const memberRoleUpdateHandler = async (oldMember: GuildMember | PartialGu
         await handleVerifiedRole(newMember);
     }
 
+}
+
+export const memberDeletedRoleHandler = async (member: GuildMember | PartialGuildMember) => {
+    await prisma.discordInvite.deleteMany({ where: { invitee: member.user.tag } });
 }

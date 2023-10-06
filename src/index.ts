@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { botInviteHandler } from './bot/inviteHandler';
 import { botMessageHandler } from './bot/messageHandler';
-import { memberRoleUpdateHandler } from './bot/roleUpdateHandler';
+import { memberDeletedRoleHandler, memberRoleUpdateHandler } from './bot/roleUpdateHandler';
 import { client } from './discordClient';
 
 dotenv.config();
@@ -24,6 +24,7 @@ client.once('ready', async () => {
 
 
 client.on('guildMemberAdd', async (member) => { botInviteHandler(member, inviteCache) });
-client.on('messageCreate', botMessageHandler);
+client.on('guildMemberRemove', memberDeletedRoleHandler);
 client.on('guildMemberUpdate', memberRoleUpdateHandler);
+client.on('messageCreate', botMessageHandler);
 client.login(token);
