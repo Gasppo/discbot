@@ -5,16 +5,12 @@ export const botInviteHandler = async (member: GuildMember, inviteCache: Map<str
     try {
         const guild = member.guild;
         const invitesAfter = await guild.invites.fetch();
-        const invitesBefore: Map<string, number> = inviteCache.get(guild.id) || new Map();
+        const invitesBefore = inviteCache.get(guild.id) || new Map();
 
         const usedInviteCode = findUsedInvite(invitesBefore, invitesAfter);
 
-        if (usedInviteCode) {
-            const invite = invitesAfter.get(usedInviteCode);
-            await processInvite(invite, member);
-        }
+        if (usedInviteCode) await processInvite(invitesAfter.get(usedInviteCode), member);
 
-        // Update the cache
         inviteCache.set(guild.id, invitesBefore);
     } catch (error) {
         console.error("Error handling invite:", error);
