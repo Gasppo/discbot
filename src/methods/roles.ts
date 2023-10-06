@@ -7,7 +7,7 @@ const RANKS = ["Mode Invite Pioneer", "Mode Invite Ambassador", "Mode Invite Kin
 const assignRole = async (member: GuildMember, roleName: string) => {
     const role = member.guild.roles.cache.find(role => role.name === roleName);
     if (role) {
-        console.log(`Assigning role ${roleName} to ${member.user.tag}`)
+        console.log(`${new Date().toLocaleString()} - Assigning role ${roleName} to ${member.user.tag}`)
         await member.roles.add(role);
     }
 }
@@ -15,7 +15,7 @@ const assignRole = async (member: GuildMember, roleName: string) => {
 const removeRole = async (member: GuildMember, roleName: string) => {
     const role = member.guild.roles.cache.find(role => role.name === roleName);
     if (role) {
-        console.log(`Removing role ${roleName} from ${member.user.tag}`)
+        console.log(`${new Date().toLocaleString()} - Removing role ${roleName} from ${member.user.tag}`)
         await member.roles.remove(role);
     }
 }

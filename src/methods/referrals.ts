@@ -15,7 +15,7 @@ export const getDistinctReferrals = async (username: string) => {
         return result.length;
     }
     catch (e) {
-        console.log(e);
+        console.log(new Date().toLocaleString() + " - " + e);
         return 0;
     }
 

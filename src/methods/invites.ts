@@ -10,17 +10,17 @@ export const processInvite = async (invite: Invite | undefined, member: GuildMem
 
     try {
         if (invitee && inviter && code && uses) {
-            console.log(`${member.user.username} joined using the invite code ${invite?.code} from ${invite?.inviter?.username}. Invite was used ${invite?.uses} times since its creation.`);
+            console.log(`${new Date().toLocaleString()} - ${member.user.username} joined using the invite code ${invite?.code} from ${invite?.inviter?.username}. Invite was used ${invite?.uses} times since its creation.`);
             await prisma.discordInvite.create({ data: { code, invitee, inviter } })
 
         }
 
         else {
-            console.log(`${member.user.username} joined using an unknown invite.`);
+            console.log(`${new Date().toLocaleString()} - ${member.user.username} joined using an unknown invite.`);
         }
     }
     catch (e) {
-        console.log(e);
+        console.log(new Date().toLocaleString() + " - " + e);
     }
 }
 

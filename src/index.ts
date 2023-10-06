@@ -10,7 +10,8 @@ const token = process.env.DISCORD_BOT_TOKEN || "";
 const inviteCache: Map<string, Map<string, number>> = new Map();  // To store invite counts for guilds
 
 client.once('ready', async () => {
-    console.log(`Bot is ready! Tag is ${client?.user?.tag}`);
+    const now = new Date().toLocaleString();
+    console.log(`${now} - Bot is ready! Tag is ${client?.user?.tag}`);
 
     for (const guild of client.guilds.cache.values()) {
         const guildInvites = await guild.invites.fetch();
