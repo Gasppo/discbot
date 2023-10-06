@@ -12,9 +12,9 @@ datasource db {
 
 model DiscordInvite {
   id        String   @id @default(uuid())
-  code      String   @unique
+  code      String
   invitee   String
   inviter   String
-  validated  Boolean  @default(false)
+  validated Boolean  @default(false)
   createdAt DateTime @default(now())
 }

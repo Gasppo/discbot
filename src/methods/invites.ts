@@ -15,9 +15,6 @@ export const processInvite = async (invite: Invite | undefined, member: GuildMem
             console.log(`${member.user.username} joined using the invite code ${invite?.code} from ${invite?.inviter?.username}. Invite was used ${invite?.uses} times since its creation.`);
             await prisma.discordInvite.create({ data: { code, invitee, inviter } })
 
-            const referals = await getDistinctReferrals(inviter);
-            handleRoleRank(member, referals);
-
         }
 
         else {

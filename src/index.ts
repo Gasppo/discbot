@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
 import { botInviteHandler } from './bot/inviteHandler';
 import { botMessageHandler } from './bot/messageHandler';
-import { client } from './discordClient';
-import { handleVerifiedRole } from './methods/roles';
 import { memberRoleUpdateHandler } from './bot/roleUpdateHandler';
+import { client } from './discordClient';
 
 dotenv.config();
 
