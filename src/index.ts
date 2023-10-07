@@ -10,18 +10,20 @@ const token = process.env.DISCORD_BOT_TOKEN || "";
 const inviteCache: Map<string, Map<string, number>> = new Map();  // To store invite counts for guilds
 
 client.once('ready', async () => {
-    const now = new Date().toLocaleString();
-    console.log(`${now} - Bot is ready! Tag is ${client?.user?.tag}`);
+    try {
+        const now = new Date().toLocaleString();
+        console.log(`${now} - Bot is ready! Tag is ${client?.user?.tag}`);
 
-    for (const guild of client.guilds.cache.values()) {
-        const guildInvites = await guild.invites.fetch();
-        const inviteMap = new Map();
+        for (const guild of client.guilds.cache.values()) {
+            const guildInvites = await guild.invites.fetch();
+            const inviteMap = new Map();
 
-        guildInvites.forEach(invite => inviteMap.set(invite.code, invite.uses));
-        inviteCache.set(guild.id, inviteMap);
-
+            guildInvites.forEach(invite => inviteMap.set(invite.code, invite.uses));
+            inviteCache.set(guild.id, inviteMap);
+        }
+    } catch (error) {
+        console.error(`${new Date().toLocaleString()} - Error starting: `, error);
     }
-
 });
 
 

@@ -19,7 +19,7 @@ const handleRefRank = async (message: Message<boolean>) => {
         const referralCount = await getDistinctReferrals(message.author.tag);
         message.reply(`You have referred ${referralCount} members!`);
     } catch (error) {
-        console.error("Error fetching referrals:", error);
+        console.error(`${new Date().toLocaleString()} - Error fetching referrals:`, error);
         message.reply("Sorry, I couldn't fetch your referral count at the moment.");
     }
 }
@@ -28,7 +28,7 @@ const handleFedeSelacome = async (message: Message<boolean>) => {
     try {
         message.reply("Fede se la come");
     } catch (error) {
-        console.error("Error fetching referrals:", error);
+        console.error(`${new Date().toLocaleString()} - Error fetching referrals:`, error);
         message.reply("Sorry, I couldn't fetch your referral count at the moment.");
     }
 }
@@ -42,7 +42,7 @@ const handleRoleRefresh = async (message: Message<boolean>) => {
 
     }
     catch (error) {
-        console.error("Error refreshing role:", error);
+        console.error(`${new Date().toLocaleString()} - Error refreshing role:`, error);
         message.reply("Sorry, I couldn't refresh your role at the moment.");
     }
 }

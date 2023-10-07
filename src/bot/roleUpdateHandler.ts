@@ -14,7 +14,7 @@ export const memberRoleUpdateHandler = async (oldMember: GuildMember | PartialGu
         if (verifiedRole) await handleVerifiedRole(newMember);
     }
     catch (error) {
-        console.error("Error handling role update:", error);
+        console.error(`${new Date().toLocaleString()} - Error handling role update:`, error);
     }
 }
 
@@ -39,7 +39,7 @@ export const memberDeletedRoleHandler = async (member: GuildMember | PartialGuil
         }
     }
     catch (error) {
-        console.error("Error handling deleted role:", error);
+        console.error(`${new Date().toLocaleString()} - Error handling deleted role:`, error);
     }
 
 }

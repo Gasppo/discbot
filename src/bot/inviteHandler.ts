@@ -13,6 +13,6 @@ export const botInviteHandler = async (member: GuildMember, inviteCache: Map<str
 
         inviteCache.set(guild.id, invitesBefore);
     } catch (error) {
-        console.error("Error handling invite:", error);
+        console.error(`${new Date().toLocaleString()} - Error handling invite:`, error);
     }
 }
