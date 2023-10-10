@@ -17,12 +17,16 @@ export const botMessageHandler = async (message: Message<boolean>, inviteCache: 
 }
 
 const handleClearInvites = async (message: Message<boolean>, inviteCache: Map<string, Map<string, number>>) => {
-    
-    const user =  message.member?.user
-    
+
+    const user = message.member?.user
+
     if (message.member?.roles.cache.find(role => role.name === "Mod")) {
         try {
-            if (message.guild) await clearInvites(message.guild, inviteCache);
+            if (message.guild) { 
+                const cleared = await clearInvites(message.guild, inviteCache);
+                const response = `Cleared ${cleared} invites!`
+                user ? user.send(response) : message.reply(response);
+             }
         } catch (error) {
             console.error(`${new Date().toLocaleString()} - Error clearing invites:`, error);
             const response = "Sorry, I couldn't clear invites at the moment."
@@ -36,7 +40,7 @@ const handleClearInvites = async (message: Message<boolean>, inviteCache: Map<st
 }
 
 const handleRefRank = async (message: Message<boolean>) => {
-    
+
     try {
         const referralCount = await getDistinctReferrals(message.author.tag);
         message.reply(`You have referred ${referralCount} members!`);

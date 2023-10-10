@@ -48,6 +48,8 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
     const guildInvites = inviteCache.get(guild.id);
 
+    let cleared = 0;
+
     if (guildInvites) {
         for (const [code, uses] of guildInvites.entries()) {
             const invite = guild.invites.cache.find(invite => invite.code === code);
@@ -56,7 +58,10 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
                 guildInvites.delete(code);
                 await invite.delete();
+                cleared++;
             }
         }
     }
+
+    return cleared;
 }
