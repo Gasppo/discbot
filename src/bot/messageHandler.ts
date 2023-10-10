@@ -1,8 +1,9 @@
 import { Message } from "discord.js";
 import { getDistinctReferrals } from "../methods/referrals";
 import { refreshRole } from "../methods/roles";
+import { clearInvites } from "../methods/invites";
 
-export const botMessageHandler = async (message: Message<boolean>) => {
+export const botMessageHandler = async (message: Message<boolean>, inviteCache: Map<string, Map<string, number>>) => {
     if (message.author.bot) return;
 
     const content = message.content.trim().toLowerCase();
@@ -10,11 +11,32 @@ export const botMessageHandler = async (message: Message<boolean>) => {
     if (content === "!refrank") return await handleRefRank(message);
     if (content === "!fedeselacome") return await handleFedeSelacome(message);
     if (content === "!refreshrole") return await handleRoleRefresh(message);
+    if (content === "!clearinvites") return await handleClearInvites(message, inviteCache);
 
     //Add more commands here
 }
 
+const handleClearInvites = async (message: Message<boolean>, inviteCache: Map<string, Map<string, number>>) => {
+    
+    const user =  message.member?.user
+    
+    if (message.member?.roles.cache.find(role => role.name === "Mod")) {
+        try {
+            if (message.guild) await clearInvites(message.guild, inviteCache);
+        } catch (error) {
+            console.error(`${new Date().toLocaleString()} - Error clearing invites:`, error);
+            const response = "Sorry, I couldn't clear invites at the moment."
+            user ? user.send(response) : message.reply(response);
+        }
+    }
+    else {
+        const response = "You don't have permission to do that."
+        user ? user.send(response) : message.reply(response);
+    }
+}
+
 const handleRefRank = async (message: Message<boolean>) => {
+    
     try {
         const referralCount = await getDistinctReferrals(message.author.tag);
         message.reply(`You have referred ${referralCount} members!`);

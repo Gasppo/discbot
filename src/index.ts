@@ -3,6 +3,7 @@ import { botInviteHandler } from './bot/inviteHandler';
 import { botMessageHandler } from './bot/messageHandler';
 import { memberDeletedRoleHandler, memberRoleUpdateHandler } from './bot/roleUpdateHandler';
 import { client } from './discordClient';
+import { clearInvites } from './methods/invites';
 
 dotenv.config();
 
@@ -20,6 +21,9 @@ client.once('ready', async () => {
 
             guildInvites.forEach(invite => inviteMap.set(invite.code, invite.uses));
             inviteCache.set(guild.id, inviteMap);
+            clearInvites(guild, inviteCache);
+
+            setInterval(() => clearInvites(guild, inviteCache), 60 * 60 * 1000);
         }
     } catch (error) {
         console.error(`${new Date().toLocaleString()} - Error starting: `, error);
@@ -30,5 +34,5 @@ client.once('ready', async () => {
 client.on('guildMemberAdd', async (member) => { botInviteHandler(member, inviteCache) });
 client.on('guildMemberRemove', memberDeletedRoleHandler);
 client.on('guildMemberUpdate', memberRoleUpdateHandler);
-client.on('messageCreate', botMessageHandler);
+client.on('messageCreate', async (message) => { botMessageHandler(message, inviteCache) });
 client.login(token);
