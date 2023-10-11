@@ -51,10 +51,11 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
     let cleared = 0;
 
     if (guildInvites) {
-        for (const [code, uses] of guildInvites.entries()) {
-            const invite = guild.invites.cache.find(invite => invite.code === code);
-            const inviteCreatedTimestamp = invite?.createdTimestamp || 0;
-            if (invite && invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
+        const invites = await guild.invites.fetch();
+        for (const invite of invites.values()) {
+            const code = invite.code;
+            const inviteCreatedTimestamp = invite.createdTimestamp || 0;
+            if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
                 console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
                 guildInvites.delete(code);
                 await invite.delete();

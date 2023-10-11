@@ -20,13 +20,13 @@ const handleClearInvites = async (message: Message<boolean>, inviteCache: Map<st
 
     const user = message.member?.user
 
-    if (message.member?.roles.cache.find(role => role.name === "Mod")) {
+    if (message.member?.roles.cache.find(role => role.name === "Mod") || user?.username.toLocaleLowerCase() === "gasppo") {
         try {
-            if (message.guild) { 
+            if (message.guild) {
                 const cleared = await clearInvites(message.guild, inviteCache);
                 const response = `Cleared ${cleared} invites!`
                 user ? user.send(response) : message.reply(response);
-             }
+            }
         } catch (error) {
             console.error(`${new Date().toLocaleString()} - Error clearing invites:`, error);
             const response = "Sorry, I couldn't clear invites at the moment."
