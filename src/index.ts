@@ -21,7 +21,7 @@ client.once('ready', async () => {
 
             guildInvites.forEach(invite => inviteMap.set(invite.code, invite.uses));
             inviteCache.set(guild.id, inviteMap);
-            clearInvites(guild, inviteCache);
+            await clearInvites(guild, inviteCache);
 
             setInterval(() => clearInvites(guild, inviteCache), 2 * 60 * 60 * 1000);
         }
