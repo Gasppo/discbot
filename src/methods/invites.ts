@@ -65,7 +65,10 @@ const deleteInvite = async (guild: Guild, invite: Invite, guildInvites: Map<stri
 
                 const headers = response.headers;
 
-                console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Reset after 25 seconds. Headers ${headers.keys()}`);
+                //Reduse headers to string "key: value"
+                const headersString = Array.from(headers.entries()).reduce((acc, [key, value]) => acc + `${key}: ${value}\n`, "");
+
+                console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Reset after 25 seconds. Headers ${headersString}`);
 
                 setTimeout(() => {
                     deleteInvite(guild, invite, guildInvites);
