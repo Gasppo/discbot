@@ -81,6 +81,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 await fetch("https://discord.com/api/v10/invites/" + code, requestOptions)
                     .then(response => {
                         if (response.status === 200) {
+                            cleared++;
                             guildInvites.delete(code);
                             return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
                         }
@@ -88,11 +89,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                     })
                     .catch(error => {
                         console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${error}`);
-
                     });
-
-                console.log(`${new Date().toLocaleString()} - Deleted invite ${code} from ${invite.inviter?.tag}`);
-                cleared++;
             }
 
         }
