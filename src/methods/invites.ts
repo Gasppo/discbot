@@ -42,26 +42,32 @@ export const findUsedInvite = (invitesBefore: Map<string, number>, invitesAfter:
 export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<string, number>>) => {
 
     //Clear invites from guild where the age is greater than 1 hour
-    const now = new Date();
-    const halfhour = 30 * 60 * 1000;
-    const halfHourAgo = new Date(now.getTime() - halfhour);
-
-    const guildInvites = inviteCache.get(guild.id);
-
     let cleared = 0;
+    
+    try {
+        const now = new Date();
+        const halfhour = 30 * 60 * 1000;
+        const halfHourAgo = new Date(now.getTime() - halfhour);
 
-    if (guildInvites) {
-        const invites = await guild.invites.fetch();
-        for (const invite of invites.values()) {
-            const code = invite.code;
-            const inviteCreatedTimestamp = invite.createdTimestamp || 0;
-            if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
-                console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
-                guildInvites.delete(code);
-                await invite.delete();
-                cleared++;
+        const guildInvites = inviteCache.get(guild.id);
+
+
+        if (guildInvites) {
+            const invites = await guild.invites.fetch();
+            for (const invite of invites.values()) {
+                const code = invite.code;
+                const inviteCreatedTimestamp = invite.createdTimestamp || 0;
+                if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
+                    console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
+                    guildInvites.delete(code);
+                    await invite.delete();
+                    cleared++;
+                }
             }
         }
+    }
+    catch (e) {
+        console.log(new Date().toLocaleString() + " - " + e);
     }
 
     return cleared;
