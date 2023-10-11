@@ -60,20 +60,20 @@ const deleteInvite = async (guild: Guild, invite: Invite, guildInvites: Map<stri
                 guildInvites.delete(code);
                 return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
             }
+            
             //Get rate limit data
             else if (response.status === 429) {
 
-                const headers = response.headers;
+                const retry = response.headers.get("retry-after");
 
-                //Reduse headers to string "key: value"
-                const headersString = Array.from(headers.entries()).reduce((acc, [key, value]) => acc + `${key}: ${value}\n`, "");
 
-                console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Reset after 25 seconds. Headers ${headersString}`);
+                console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Reset after ${retry} seconds.`);
 
                 setTimeout(() => {
                     deleteInvite(guild, invite, guildInvites);
-                }, 25000);
+                }, parseInt(retry || "25") * 1000);
             }
+
             else
                 console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${response.status} - ${response.statusText}`);
         })
