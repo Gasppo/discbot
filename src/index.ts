@@ -23,7 +23,7 @@ client.once('ready', async () => {
             inviteCache.set(guild.id, inviteMap);
             await clearInvites(guild, inviteCache);
 
-            setInterval(async () => await clearInvites(guild, inviteCache), 2 * 60 * 60 * 1000);
+            setInterval(async () => await clearInvites(guild, inviteCache),  20 * 60 * 1000);
         }
     } catch (error) {
         console.error(`${new Date().toLocaleString()} - Error starting: `, error);

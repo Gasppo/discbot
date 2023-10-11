@@ -57,7 +57,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
             const invitesArray = Array.from(invites.values())
                 .filter(inv => inv.maxAge && inv.maxAge <= 2592000 && inv?.createdTimestamp && inv?.createdTimestamp < halfHourAgo.getTime())
-                .splice(0, 10);
+                .splice(0, 5);
 
             console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invitesArray.length}`);
 
