@@ -43,7 +43,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
     //Clear invites from guild where the age is greater than 1 hour
     let cleared = 0;
-    
+
     try {
         const now = new Date();
         const halfhour = 30 * 60 * 1000;
@@ -58,9 +58,9 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 const code = invite.code;
                 const inviteCreatedTimestamp = invite.createdTimestamp || 0;
                 if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
-                    console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
+                    await guild.invites.delete(code);
                     guildInvites.delete(code);
-                    await invite.delete();
+                    console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
                     cleared++;
                 }
             }
