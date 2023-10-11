@@ -54,10 +54,15 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
         if (guildInvites) {
             const invites = await guild.invites.fetch();
-            console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invites.size}`);
-            for (const invite of invites.values()) {
+
+            //splice first 10 invites
+            const invitesArray = Array.from(invites.values()).splice(0, 10);
+
+            console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invitesArray.length}`);
+            for (const invite of invitesArray) {
                 const code = invite.code;
                 const inviteCreatedTimestamp = invite.createdTimestamp || 0;
+                console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
                 if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
                     if (invite.deletable) await invite.delete("Expired invite")
                     guildInvites.delete(code);
