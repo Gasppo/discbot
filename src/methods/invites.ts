@@ -39,6 +39,47 @@ export const findUsedInvite = (invitesBefore: Map<string, number>, invitesAfter:
     return usedInviteCode;
 };
 
+const deleteInvite = async (guild: Guild, invite: Invite, guildInvites: Map<string, number>) => {
+    const code = invite.code;
+    const inviteCreatedTimestamp = invite.createdTimestamp || 0;
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bot " + (process.env.DISCORD_BOT_TOKEN || ""));
+    const redirect: RequestRedirect = 'follow';
+
+    var requestOptions = {
+        method: 'DELETE',
+        headers: myHeaders,
+        redirect
+    };
+
+    console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
+    await fetch("https://discord.com/api/v10/invites/" + code, requestOptions)
+        .then(response => {
+            if (response.status === 200) {
+                guildInvites.delete(code);
+                return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
+            }
+            //Get rate limit data
+            else if (response.status === 429) {
+
+                const limitRemaining = response.headers.get('x-ratelimit-remaining');
+                const resetAfter = response.headers.get('x-ratelimit-reset-after');
+
+                console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Limit remaining: ${limitRemaining} - Reset after: ${resetAfter}`);
+                
+                setTimeout(() => {
+                    deleteInvite(guild, invite, guildInvites);
+                }, 5000);
+            }
+            else
+                console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${response.status} - ${response.statusText}`);
+        })
+        .catch(error => {
+            console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${error}`);
+        });
+}
+
 export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<string, number>>) => {
 
     //Clear invites from guild where the age is greater than 1 hour
@@ -51,7 +92,6 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
         const guildInvites = inviteCache.get(guild.id);
 
-
         if (guildInvites) {
             const invites = await guild.invites.fetch();
 
@@ -62,36 +102,9 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
             console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invitesArray.length}`);
 
             for (const invite of invitesArray) {
-
-                const code = invite.code;
-                const inviteCreatedTimestamp = invite.createdTimestamp || 0;
-
-                var myHeaders = new Headers();
-                myHeaders.append("Authorization", "Bot " + (process.env.DISCORD_BOT_TOKEN || ""));
-                const redirect: RequestRedirect = 'follow';
-
-                var requestOptions = {
-                    method: 'DELETE',
-                    headers: myHeaders,
-                    redirect
-                };
-
-
-                console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
-                await fetch("https://discord.com/api/v10/invites/" + code, requestOptions)
-                    .then(response => {
-                        if (response.status === 200) {
-                            cleared++;
-                            guildInvites.delete(code);
-                            return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
-                        }
-                        console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${response.status} - ${response.statusText}`);
-                    })
-                    .catch(error => {
-                        console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${error}`);
-                    });
+                await deleteInvite(guild, invite, guildInvites);
+                cleared++;
             }
-
         }
     }
     catch (e) {
@@ -100,4 +113,3 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
     return cleared;
 }
-
