@@ -66,9 +66,30 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 const code = invite.code;
                 const inviteCreatedTimestamp = invite.createdTimestamp || 0;
 
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bot " + (process.env.DISCORD_BOT_TOKEN || ""));
+                const redirect: RequestRedirect = 'follow';
+
+                var requestOptions = {
+                    method: 'DELETE',
+                    headers: myHeaders,
+                    redirect
+                };
+
+
                 console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
-                await guild.invites.delete(code)
-                guildInvites.delete(code);
+                await fetch("https://discord.com/api/v10/invites/" + code, requestOptions)
+                    .then(response => {
+                        if (response.status === 200) {
+                            guildInvites.delete(code);
+                            return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
+                        }
+                        console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${response.status} - ${response.statusText}`);
+                    })
+                    .catch(error => {
+                        console.log(`${new Date().toLocaleString()} - Error deleting invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag} - ${error}`);
+
+                    });
 
                 console.log(`${new Date().toLocaleString()} - Deleted invite ${code} from ${invite.inviter?.tag}`);
                 cleared++;
@@ -82,3 +103,4 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
 
     return cleared;
 }
+
