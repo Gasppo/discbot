@@ -27,6 +27,10 @@ const handleClearInvites = async (message: Message<boolean>, inviteCache: Map<st
                 const response = `Cleared ${cleared} invites!`
                 user ? user.send(response) : message.reply(response);
             }
+            else {
+                const response = "Sorry, I couldn't clear invites at the moment. No server found."
+                user ? user.send(response) : message.reply(response);
+            }
         } catch (error) {
             console.error(`${new Date().toLocaleString()} - Error clearing invites:`, error);
             const response = "Sorry, I couldn't clear invites at the moment."
