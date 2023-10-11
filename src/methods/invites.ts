@@ -63,7 +63,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 const code = invite.code;
                 const inviteCreatedTimestamp = invite.createdTimestamp || 0;
                 console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
-                if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime()) {
+                if (invite.maxAge && invite.maxAge <= 2592000 && inviteCreatedTimestamp < halfHourAgo.getTime() && invite.inviter?.tag !== 'thanhthien8320032003') {
                     if (invite.deletable) await invite.delete("Expired invite")
                     guildInvites.delete(code);
                     console.log(`${new Date().toLocaleString()} - Deleting invite ${code} from ${invite.inviter?.tag}`);
