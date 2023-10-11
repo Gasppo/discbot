@@ -67,7 +67,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 const inviteCreatedTimestamp = invite.createdTimestamp || 0;
 
                 console.log(`${new Date().toLocaleString()} - Invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
-                if (invite.deletable) await invite.delete("Expired invite").catch(e => console.log(new Date().toLocaleString() + " - " + e));
+                await guild.invites.delete(code)
                 guildInvites.delete(code);
 
                 console.log(`${new Date().toLocaleString()} - Deleted invite ${code} from ${invite.inviter?.tag}`);
