@@ -60,18 +60,13 @@ const deleteInvite = async (guild: Guild, invite: Invite, guildInvites: Map<stri
                 guildInvites.delete(code);
                 return console.log(`${new Date().toLocaleString()} - Deleted invite ${code} created at ${new Date(inviteCreatedTimestamp).toLocaleString()} by ${invite.inviter?.tag}`);
             }
-            
+
             //Get rate limit data
             else if (response.status === 429) {
 
                 const retry = response.headers.get("retry-after");
-
-
                 console.log(`${new Date().toLocaleString()} - Rate limit exceeded. Reset after ${retry} seconds.`);
 
-                setTimeout(() => {
-                    deleteInvite(guild, invite, guildInvites);
-                }, parseInt(retry || "25") * 1000);
             }
 
             else
@@ -98,14 +93,16 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
             const invites = await guild.invites.fetch();
 
             const invitesArray = Array.from(invites.values())
-                .filter(inv => inv.maxAge && inv.maxAge <= 2592000 && inv?.createdTimestamp && inv?.createdTimestamp < halfHourAgo.getTime())
-                .splice(0, 5);
+                .filter(inv => inv.maxAge && Number(inv.maxAge) <= 2592000 && inv?.createdTimestamp && inv?.createdTimestamp < halfHourAgo.getTime())
+                .sort((a, b) => (a.createdAt && b.createdAt) ? a.createdAt.valueOf() - b.createdAt.valueOf() : 0)
+                .splice(0, 50);
 
             console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invitesArray.length}`);
-
-            for (const invite of invitesArray) {
-                await deleteInvite(guild, invite, guildInvites);
-                cleared++;
+            if (invites.size > 800 && invitesArray.length > 50) {
+                for (const invite of invitesArray) {
+                    await deleteInvite(guild, invite, guildInvites);
+                    cleared++;
+                }
             }
         }
     }

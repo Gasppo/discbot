@@ -36,9 +36,9 @@ export const refreshRole = async (member: GuildMember) => {
 export const handleRoleRank = async (member: GuildMember, referrals: number) => {
 
     if (referrals <= 0) return;
-    if (referrals < 5) return await assignRole(member, RANKS[0]);
-    if (referrals < 10) return await assignRole(member, RANKS[1]);
-    if (referrals >= 10) return await assignRole(member, RANKS[2]);
+    if (referrals < 5) await assignRole(member, RANKS[0]);
+    if (referrals < 10) await assignRole(member, RANKS[1]);
+    if (referrals >= 10) await assignRole(member, RANKS[2]);
 
 }
 
