@@ -68,7 +68,6 @@ const handleRoleRefresh = async (message: Message<boolean>) => {
     try {
         if (message.member) {
             await refreshRole(message.member);
-            message.reply("Your role has been refreshed!");
         }
 
     }
