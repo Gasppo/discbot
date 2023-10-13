@@ -98,7 +98,7 @@ export const clearInvites = async (guild: Guild, inviteCache: Map<string, Map<st
                 .splice(0, 50);
 
             console.log(`${new Date().toLocaleString()} - Clearing invites from ${guild.name} - Current invites: ${invitesArray.length}`);
-            if (invites.size > 800 && invitesArray.length > 50) {
+            if (invites.size > 500 && invitesArray.length > 50) {
                 for (const invite of invitesArray) {
                     await deleteInvite(guild, invite, guildInvites);
                     cleared++;

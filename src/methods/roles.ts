@@ -25,7 +25,7 @@ export const refreshRole = async (member: GuildMember) => {
     const referrals = await getDistinctReferrals(member.user.tag);
 
     //We remove the current role and assign the new one
-    if (referrals <= 0) await removeRole(member, RANKS[0]);
+    if (referrals < 1) await removeRole(member, RANKS[0]);
     else if (referrals < 5) await removeRole(member, RANKS[1]);
     else if (referrals < 10) await removeRole(member, RANKS[2]);
 
@@ -36,8 +36,8 @@ export const refreshRole = async (member: GuildMember) => {
 export const handleRoleRank = async (member: GuildMember, referrals: number) => {
 
     if (referrals <= 0) return;
-    if (referrals < 5) await assignRole(member, RANKS[0]);
-    if (referrals < 10) await assignRole(member, RANKS[1]);
+    if (referrals >= 1) await assignRole(member, RANKS[0]);
+    if (referrals >= 5) await assignRole(member, RANKS[1]);
     if (referrals >= 10) await assignRole(member, RANKS[2]);
 
 }

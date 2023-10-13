@@ -47,7 +47,8 @@ const handleRefRank = async (message: Message<boolean>) => {
 
     try {
         const referralCount = await getDistinctReferrals(message.author.tag);
-        message.reply(`You have referred ${referralCount} members!`);
+        await handleRoleRefresh(message);
+        message.reply(`You have referred ${referralCount} members! Role now updated.`);
     } catch (error) {
         console.error(`${new Date().toLocaleString()} - Error fetching referrals:`, error);
         message.reply("Sorry, I couldn't fetch your referral count at the moment.");
