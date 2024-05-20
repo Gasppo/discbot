@@ -33,10 +33,6 @@ Discbot is a Discord bot designed to manage invites, referrals, and roles within
    pnpm run start
    ```
 
-Certainly! Below is an additional section that you might add to your README to guide users through deploying the Discord bot on a Google Cloud Platform (GCP) f1-micro VM instance:
-
----
-
 ## Deployment on Google Cloud Platform (GCP)
 
 ### Prerequisites
